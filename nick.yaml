@@ -1,22 +1,26 @@
 ---
-:word: bagpipes
+:word: enormous
 :render_word:
-- b
-- a
-- _
-- _
-- _
-- _
-- _
-- _
-:guesses_remaining: 100
-:guessed_letters:
-- a
-- b
-:letters:
-- c
-- d
 - e
+- n
+- o
+- r
+- _
+- o
+- _
+- _
+:guesses_remaining: 98
+:guessed_letters:
+- c
+- v
+- e
+- n
+- o
+- r
+:letters:
+- a
+- b
+- d
 - f
 - g
 - h
@@ -25,15 +29,11 @@
 - k
 - l
 - m
-- n
-- o
 - p
 - q
-- r
 - s
 - t
 - u
-- v
 - w
 - x
 - y

@@ -1,1 +1,1 @@
-Work on the serialization, and importing from a serialized YAML file
+When you start a game, you should be give the option to load a game.

@@ -6,13 +6,37 @@ class Game
 
     
     
-    def initialize
-        @word = read_in_file
-        @render_word = Array.new(@word.length,"_")
-        @guesses_remaining = 100
-        @guessed_letters = []
-        @letters = []
-        ('a'..'z').each { |x| @letters.push(x)}
+    def initialize(file=nil)
+        if file == nil
+            @word = read_in_file
+            @render_word = Array.new(@word.length,"_")
+            @guesses_remaining = 100
+            @guessed_letters = []
+            @letters = []
+            ('a'..'z').each { |x| @letters.push(x)}
+            @game_over = false
+        else
+            data = Game.import_from_yaml(file)
+            @word = data[:word]
+            @render_word = data[:render_word]
+            @guesses_remaining = data[:guesses_remaining]
+            @guessed_letters = data[:guessed_letters]
+            @letters = data[:letters]
+            @game_over = false
+        end
+    end
+
+    def self.intro
+        puts "Would you like to load a file? (y/n)"
+        response = gets.chomp.downcase
+        if response == 'y'
+            puts "what is the name of the file to load?"
+            filename = gets.chomp.downcase
+            g = Game.new(file=filename)
+        else
+            g = Game.new
+        end
+        g
     end
 
     def read_in_file
@@ -25,14 +49,18 @@ class Game
     def guess_letter
 
         render
-        puts "Please guess a letter between A-Z."
+        puts "Please guess a letter between A-Z.  You can type 'save' to save the game"
         letter = gets.chomp.downcase
-        if !letter_available(letter)
+        if !letter_available(letter) && !letter == 'save'
             puts "Please enter a letter that you have not guessed!!"
             puts
             return
         end
-        #remove letter from letters
+        if letter == 'save'
+            save
+            @game_over = true
+            return
+        end
         @letters.delete(letter)
         @guessed_letters.push(letter)
         #check letter is in word
@@ -48,6 +76,12 @@ class Game
 
     end
 
+    def save
+        puts "We will save your file.  Please enter the name of the file"
+        fname = gets.chomp.downcase
+        save_game(fname,self.to_yaml)
+    end
+
     def to_yaml
         YAML.dump({
             :word => @word,
@@ -59,9 +93,14 @@ class Game
     end
 
     def self.import_from_yaml(file)
-        data = YAML.load(file)
-        puts data
-        #self.new(data[:word], data[:render_word], data[:guesses_remaining], data[:guessed_letters], data[:letters])
+        loaded_file = File.open(file,'r')
+
+        data = YAML.load(loaded_file.read)
+        #puts data
+ 
+
+        data
+        
     end
 
     def save_game(filename,serialized_object)
@@ -119,8 +158,9 @@ class Game
         elsif @guesses_remaining == 0
             puts "You have run out of guesses.  The word was #{@word}"
             true
+
         else
-            false
+            @game_over
         end
 
     end
