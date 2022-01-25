@@ -8,9 +8,9 @@ class Game
     
     def initialize(file=nil)
         if file == nil
-            @word = read_in_file
+            @word = read_in_file.downcase
             @render_word = Array.new(@word.length,"_")
-            @guesses_remaining = 100
+            @guesses_remaining = @word.length
             @guessed_letters = []
             @letters = []
             ('a'..'z').each { |x| @letters.push(x)}
@@ -30,7 +30,8 @@ class Game
         puts "Would you like to load a file? (y/n)"
         response = gets.chomp.downcase
         if response == 'y'
-            puts "what is the name of the file to load?"
+            puts "what is the name of the file to load?  Here are the available files"
+            self.get_files
             filename = gets.chomp.downcase
             g = Game.new(file=filename)
         else
@@ -46,12 +47,20 @@ class Game
         available_words.sample.chomp 
     end
 
+
+    def self.get_files
+        files = Dir.entries(Dir.pwd)
+        game_files = files.select { |x| x.include?('.yaml')}
+        puts game_files
+    end
+
     def guess_letter
 
         render
         puts "Please guess a letter between A-Z.  You can type 'save' to save the game"
         letter = gets.chomp.downcase
-        if !letter_available(letter) && !letter == 'save'
+        if !letter_available(letter) && !(letter == 'save')
+            system('clear')
             puts "Please enter a letter that you have not guessed!!"
             puts
             return
